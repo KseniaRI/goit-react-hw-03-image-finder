@@ -5,7 +5,7 @@ import { Grid } from './ImageGallery.styled';
 import { Button } from '../button/Button';
 import { Message } from '../message/Message';
 import { Loader } from '../loader/Loader';
-import { Modal } from '../modal/Modal';
+// import { Modal } from '../modal/Modal';
 
 const pixabayApiService = new PixabayApiService();
 
