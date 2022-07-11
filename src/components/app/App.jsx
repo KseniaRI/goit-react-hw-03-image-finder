@@ -19,6 +19,7 @@ export class App extends Component{
     images: [],
     status: 'idle',
     selectedImgUrl: '',
+    firstId: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -36,7 +37,7 @@ export class App extends Component{
 
             pixabayApiService.fetchImages().then(responce => {
               if (responce.hits.length > 0) {
-                  this.setState(prevState => ({ images: [...prevState.images, ...responce.hits], status: 'resolved', }));
+                  this.setState(prevState => ({ images: [...prevState.images, ...responce.hits], status: 'resolved',firstId: responce.hits[0].id  }), this.scrollToBottom);
                     // window.scrollByPages(currentPage) ;
                
                 } else {
@@ -45,6 +46,18 @@ export class App extends Component{
             }).catch(error => this.setState({ error: error.message, status: 'rejected' }));
         }
   }
+
+  scrollToBottom = () => {
+    
+    if (this.state.page > 1) {
+      const firstElOnPage = document.getElementById(this.state.firstId).offsetTop;
+      window.scrollTo({
+      // top: document.documentElement.scrollHeight,
+        top: firstElOnPage,
+        behavior: 'smooth',
+  });
+   }
+};
 
   onLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1, }));
