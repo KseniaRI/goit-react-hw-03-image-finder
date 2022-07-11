@@ -16,6 +16,7 @@ export class ImageGallery extends Component{
         error: '',
         status: 'idle',
         showModal: false,
+        selectedImgUrl: '',
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -50,11 +51,29 @@ export class ImageGallery extends Component{
         this.setState(({showModal}) => ({
           showModal: !showModal,
         }));
-      
+        
+    }
+
+    onShowModal = (lageImageUrl) => {
+       this.setState({
+           showModal: true,
+           selectedImgUrl: lageImageUrl,
+        });
+    }
+
+    onCloseModal = () => {
+        this.setState({
+            showModal: false,
+            selectedImgUrl: '',
+        })
+    }
+    handleSelectedImg(url) {
+        
+        this.setState({ selectedImgUrl: url });
     }
 
     render() {
-        const { images, error, status, showModal } = this.state; 
+        const { images, error, status, showModal, selectedImgUrl } = this.state; 
         if (status === 'idle') {
             return <Message text="Enter something..." />;
         }
@@ -70,21 +89,14 @@ export class ImageGallery extends Component{
                     <Grid>
                         {images.map(image => { 
                             return (   
-                                
-                                    <ImageGalleryItem
-                                        toogle={this.toggleModal}
-                                        showModal={showModal}
-                                        image={image}
-                                        key={image.id}
-                                    />   
-                                    // {showModal && (
-                                    //          <Modal onClose={this.toggleModal}>
-                                    //              <img src={image.largeImageURL} alt={image.tags} />
-                                    //          </Modal>
-                                    //  )
-                                    //  }
-                                     
-                                
+                                <ImageGalleryItem
+                                    onShowModal={this.onShowModal}
+                                    onCloseModal={this.onCloseModal}
+                                    showModal={showModal}
+                                    selectedImgUrl = {selectedImgUrl}
+                                    image={image}
+                                    key={image.id}
+                                />   
                             )
                         })}  
                         

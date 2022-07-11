@@ -2,17 +2,17 @@ import { GridItem, GridImg } from './ImageGalleryItem.styled';
 import { Modal } from '../modal/Modal';
 
 
-export const ImageGalleryItem = ({image, toogle, showModal}) => {
+export const ImageGalleryItem = ({onShowModal, onCloseModal, showModal, selectedImgUrl, image }) => {
 
     return (
         <GridItem >
             <GridImg
-                onClick={toogle}
+                onClick={() => onShowModal(image.largeImageURL)}
                 src={image.webformatURL} alt={image.tags} />
-            
+                
              {showModal && (
-                 <Modal onClose={toogle}>
-                    <img src={image.largeImageURL} alt={image.tags} />
+                 <Modal onClose={onCloseModal}>
+                    <img src={selectedImgUrl} alt={image.tags} />
                  </Modal>
             )}
         </GridItem>
