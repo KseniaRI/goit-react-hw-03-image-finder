@@ -8,10 +8,12 @@ import { Loader } from '../loader/Loader';
 import { Button } from '../button/Button';
 import { Modal } from '../modal/Modal';
 
+
 const pixabayApiService = new PixabayApiService(); 
 
 export class App extends Component{
   state = {
+    page: 1,
     query: '',
     error: '',
     images: [],
@@ -20,40 +22,34 @@ export class App extends Component{
   };
 
   componentDidUpdate(prevProps, prevState) {
-        const prevQuery = prevState.query;
-        const newQuery = this.state.query;
+    const prevQuery = prevState.query;
+    const newQuery = this.state.query;
+    const prevPage = prevState.page;
+    const currentPage = this.state.page;
         
-        if (prevQuery !== newQuery) {
+        if (prevQuery !== newQuery || prevPage !== currentPage) {
 
             this.setState({ status: 'pending' });
 
             pixabayApiService.query = newQuery;
-            pixabayApiService.resetPage();
+            pixabayApiService.page = currentPage;
 
             pixabayApiService.fetchImages().then(responce => {
-                if (responce.hits.length > 0) {
-                    this.setState({ images: responce.hits, status: 'resolved' })
+              if (responce.hits.length > 0) {
+                  this.setState(prevState => ({ images: [...prevState.images, ...responce.hits], status: 'resolved', }));
+                    // window.scrollByPages(currentPage) ;
+               
                 } else {
                     this.setState({ error: `There are no images with key word ${newQuery}`, status: 'rejected'})
                 }
             }).catch(error => this.setState({ error: error.message, status: 'rejected' }));
         }
-    }
+  }
 
-    onLoadMore = () => {
-        pixabayApiService.fetchImages().then(responce => {
-            this.setState(prevState => ({ images: [...prevState.images, ...responce.hits] }))
-        }).catch(error => this.setState({ error: error.message, status: 'rejected' }));
-    }
-
-    toggleModal = () => {
-        
-        this.setState(({showModal}) => ({
-          showModal: !showModal,
-        }));
-        
-    }
-
+  onLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1, }));
+  }
+  
     onShowModal = (lageImageUrl) => {
        this.setState({
            selectedImgUrl: lageImageUrl,
@@ -72,7 +68,9 @@ export class App extends Component{
 
   formSubmitHandler = ({query}, { resetForm }) => {
     this.setState({
+      page: 1,
       query,
+      images: [],
     });
      resetForm();
   }
@@ -87,11 +85,10 @@ export class App extends Component{
         {status === 'rejected' && <Message text={error} />}
         {status === 'pending' && <Loader />}
         {status === 'resolved' && <>
-                                    <ImageGallery images={images} onShowModal={this.onShowModal} searchQuery={this.state.query} />
-                                    <Button onClick={this.onLoadMore} />
-                                  </>
-        }
-        {selectedImgUrl && (
+          <ImageGallery firstImgOnPageId={this.firstImgOnPageId} images={images} onShowModal={this.onShowModal} />
+                                    <Button onClick={this.onLoadMore}  />
+                                  </>}
+        {selectedImgUrl.length > 0 && (
                  <Modal onClose={this.onCloseModal}>
                     <img src={selectedImgUrl} alt="" />
                  </Modal>

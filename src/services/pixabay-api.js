@@ -11,22 +11,12 @@ export class PixabayApiService {
        return fetch(`${BASE_URL}/?q=${this.searchQuery}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12&page=${this.page}`)
             .then(responce => {
                 if (responce.ok) {
-                    this.incrementPage();
                     return responce.json();
                 }
                 return Promise.reject(new Error(`Something went wrong. There are no ${this.searchQuery} images`));
             });
     }
 
-    incrementPage () {
-         this.page += 1 ;
-    }
-    getPage(){
-        return this.page;
-    }
-    resetPage() {
-        this.page = 1;
-    }
     get query() {
         return this.searchQuery;
     }

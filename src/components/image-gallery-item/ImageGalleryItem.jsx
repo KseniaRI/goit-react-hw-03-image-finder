@@ -1,5 +1,4 @@
 import { GridItem, GridImg } from './ImageGalleryItem.styled';
-// import { Modal } from '../modal/Modal';
 import PropTypes from 'prop-types'; 
 
 
@@ -11,7 +10,8 @@ export const ImageGalleryItem = ({
         <GridItem >
             <GridImg
                 onClick={() => onShowModal(image.largeImageURL)}
-                src={image.webformatURL} alt={image.tags} />
+                src={image.webformatURL} alt={image.tags}
+                id={image.id} />
         </GridItem>
     );
 }

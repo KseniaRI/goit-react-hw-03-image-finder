@@ -1,7 +1,8 @@
 import { ImageGalleryItem } from '../image-gallery-item/ImageGalleryItem';
 import { Grid } from './ImageGallery.styled';
+import PropTypes from 'prop-types'; 
 
-export const ImageGallery = ({images, onShowModal}) => {
+export const ImageGallery = ({ images, onShowModal}) => {
 
     return (
         <>
@@ -10,4 +11,12 @@ export const ImageGallery = ({images, onShowModal}) => {
             </Grid>
         </>
     );       
+}
+
+ImageGallery.propTypes = {
+    images: PropTypes.arrayOf(PropTypes.shape({
+        image: PropTypes.shape({
+            id: PropTypes.string,
+        })
+    }))
 }

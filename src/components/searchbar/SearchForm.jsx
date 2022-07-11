@@ -13,7 +13,7 @@ export const SearchForm = ({ onSubmit }) => {
             onSubmit={onSubmit}
         >
             <StyledForm autoComplete='off'  >
-                <SearchFormButton type='sumbit'>
+                <SearchFormButton aria-label="search" type='sumbit'>
                     <FaSearch />
                 </SearchFormButton>
                 <StyledField type="text" name="query" placeholder="Search images and photos" />
