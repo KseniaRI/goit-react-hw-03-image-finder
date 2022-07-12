@@ -8,7 +8,7 @@ import { Loader } from '../loader/Loader';
 import { Button } from '../button/Button';
 import { Modal } from '../modal/Modal';
 
-
+const PER_PAGE = 12;
 const pixabayApiService = new PixabayApiService(); 
 
 export class App extends Component{
@@ -17,6 +17,7 @@ export class App extends Component{
     query: '',
     error: '',
     images: [],
+    totalImages: 0,
     status: 'idle',
     selectedImgUrl: '',
     firstElOfPageId: '',
@@ -37,7 +38,7 @@ export class App extends Component{
 
             pixabayApiService.fetchImages().then(responce => {
               if (responce.hits.length > 0) {
-                  this.setState(prevState => ({ images: [...prevState.images, ...responce.hits], status: 'resolved', firstElOfPageId: responce.hits[0].id  }), this.scrollToNextPage);
+                  this.setState(prevState => ({ images: [...prevState.images, ...responce.hits], status: 'resolved', firstElOfPageId: responce.hits[0].id, totalImages: responce.totalHits  }), this.scrollToNextPage);
                     // window.scrollByPages(currentPage) ;
                 } else {
                     this.setState({ error: `There are no images with key word ${newQuery}`, status: 'rejected'})
@@ -59,7 +60,7 @@ export class App extends Component{
 };
 
   onLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1, }));
+    this.setState(prevState => ({ page: prevState.page + 1, }), );
   }
   
     onShowModal = (lageImageUrl) => {
@@ -88,7 +89,7 @@ export class App extends Component{
   }
 
   render() {
-    const { images, error, status, selectedImgUrl } = this.state; 
+    const { images, error, page, status, totalImages, selectedImgUrl } = this.state; 
     
     return (
       <Container>
@@ -98,8 +99,9 @@ export class App extends Component{
         {status === 'pending' && <Loader />}
         {status === 'resolved' && <>
           <ImageGallery firstImgOnPageId={this.firstImgOnPageId} images={images} onShowModal={this.onShowModal} />
-                                    <Button onClick={this.onLoadMore}  />
-                                  </>}
+          
+        </>}
+        {status === 'resolved' && !(Math.ceil(totalImages / PER_PAGE) === page) && <Button onClick={this.onLoadMore} />}
         {selectedImgUrl.length > 0 && (
                  <Modal onClose={this.onCloseModal}>
                     <img src={selectedImgUrl} alt="" />
